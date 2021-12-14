@@ -290,6 +290,67 @@ void Adafruit_GFX::drawCircleHelper( int16_t x0, int16_t y0,
     }
 }
 
+/*!
+   @brief    Draw a Ellipse
+    @param    x0  center point x coordinate
+    @param    y0  center point y coordinate
+    @param    rx  radius x coordinate
+    @param    ry  radius y coordinate
+    @param    color 16-bit 5-6-5 Color to draw with
+*/
+void Adafruit_GFX::drawEllipse(int16_t x0, int16_t y0, int16_t rx, int16_t ry, 
+		uint16_t color) {
+	int16_t Rx2 = rx*rx;
+	int16_t Ry2 = ry*ry;
+	int16_t twoRx2 = 2*Rx2;
+	int16_t twoRy2 = 2*Ry2;
+	int16_t p;
+	int16_t x = 0;
+	int16_t y = ry;
+	int16_t px = 0;
+	int16_t py = twoRx2*y;
+	startWrite();
+	writePixel(x0 + x,y0 + y,color);
+	writePixel(x0 - x,y0 + y,color);
+	writePixel(x0 + x,y0 - y,color);
+	writePixel(x0 - x,y0 - y,color);
+	//region1
+	p = (int16_t)(Ry2-Rx2*ry+0.25*Rx2);
+	while(px < py){
+		x++;
+		px += twoRy2;
+		if(p < 0)
+			p += Ry2 + px;
+		else{
+			y--;
+			py -= twoRx2;
+			p += Ry2 + px - py;
+		}
+		writePixel(x0 + x,y0 + y,color);
+		writePixel(x0 - x,y0 + y,color);
+		writePixel(x0 + x,y0 - y,color);
+		writePixel(x0 - x,y0 - y,color);
+	}
+	//region2
+	p = (int16_t)(Ry2*(x+0.5)*(x+0.5)+Rx2*(y-1)*(y-1)-Rx2*Ry2);
+	while(y > 0){
+		y--;
+		py -= twoRx2;
+		if(p > 0)
+			p += Rx2 - py;
+		else{
+			x++;
+			px += twoRy2;
+			p += Rx2 - py + px;
+		}
+		writePixel(x0 + x,y0 + y,color);
+		writePixel(x0 - x,y0 + y,color);
+		writePixel(x0 + x,y0 - y,color);
+		writePixel(x0 - x,y0 - y,color);
+	}
+	endWrite();
+}
+
 void Adafruit_GFX::fillCircle(int16_t x0, int16_t y0, int16_t r,
         uint16_t color) {
     startWrite();
