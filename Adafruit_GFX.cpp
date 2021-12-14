@@ -289,6 +289,35 @@ void Adafruit_GFX::drawCircleHelper( int16_t x0, int16_t y0,
         }
     }
 }
+/*!
+   @brief    Draw a Pentagram
+    @param    x0  center point x coordinate
+    @param    y0  center point y coordinate
+    @param    r   radius coordinate
+    @param    color 16-bit 5-6-5 Color to draw with
+*/
+void Adafruit_GFX::drawPentagram(int16_t x0, int16_t y0, int16_t r,
+                                 uint16_t color)
+{
+    int16_t x[5];
+    int16_t y[5];
+    x[0] = x0;
+    x[1] = x0 - r * cos(PI / 10);
+    x[2] = x0 - r * sin(PI / 5);
+    x[3] = x0 + r * sin(PI / 5);
+    x[4] = x0 + r * cos(PI / 10);
+    y[0] = y0 + r;
+    y[1] = y0 + r * sin(PI / 10);
+    y[2] = y0 - r * cos(PI / 5);
+    y[3] = y0 - r * cos(PI / 5);
+    y[4] = y0 + r * sin(PI / 10);
+    startWrite();
+    for (int i = 0; i < 5; i++)
+    {
+        drawLine(x[i], y[i], x[(i + 2) % 5], y[(i + 2) % 5], color);
+    }
+    endWrite();
+}
 
 /*!
    @brief    Draw a Ellipse
